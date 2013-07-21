@@ -1,17 +1,17 @@
 <div id="StrainID_body">
     <table class="z-datatable">
         <tr class="strain_list_row_header">
-            <td>{gt text="Name"}</td>
-            <td>{gt text="Indole"}</td>
-            <td>{gt text="Methyl Red"}</td>
-            <td>{gt text="Vogues-Proskauer"}</td>
-            <td>{gt text="Citrate"}</td>
-            <td>{gt text="H<sub>2</sub>S"}</td>
-            <td>{gt text="Phenyl Alanine"}</td>
-            <td>{gt text="Lysine"}</td>
-            <td>{gt text="Ornithine"}</td>
-            <td>{gt text="Motility"}</td>
-            <td>{gt text="Lastose Fermentation"}</td>
+            <td class="strain_header">{gt text="Name"}</td>
+            <td class="strain_header">{gt text="Indole"}</td>
+            <td class="strain_header">{gt text="Methyl Red"}</td>
+            <td class="strain_header">{gt text="Vogues-Proskauer"}</td>
+            <td class="strain_header">{gt text="Citrate"}</td>
+            <td class="strain_header">{gt text="H<sub>2</sub>S"}</td>
+            <td class="strain_header">{gt text="Phenyl Alanine"}</td>
+            <td class="strain_header">{gt text="Lysine"}</td>
+            <td class="strain_header">{gt text="Ornithine"}</td>
+            <td class="strain_header">{gt text="Motility"}</td>
+            <td class="strain_header">{gt text="Lastose Fermentation"}</td>
         <tr>
     {foreach item='strain' from=$strains}
         <tr class="strain_list_row">

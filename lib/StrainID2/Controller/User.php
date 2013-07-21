@@ -29,7 +29,11 @@ class StrainID2_Controller_User extends Zikula_AbstractController
     {
         // check module permissions
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('StrainID2::', '::', ACCESS_OVERVIEW), LogUtil::getErrorMsgPermission());
-        return "This is a temp message";
+        $repository = $this->entityManager->getRepository('StrainID2_Entity_StrainID2');
+        $strain_table = StrainID2_Api_User::generate_strain_table($this->view, $repository, true);
+        $this->view->assign('strain_table', $strain_table);
+
+        return $this->view->fetch('user/view.tpl');
         
     }
 
@@ -40,12 +44,17 @@ class StrainID2_Controller_User extends Zikula_AbstractController
      */
     public function display($args)
     {
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('StrainID2::', '::', ACCESS_OVERVIEW), LogUtil::getErrorMsgPermission());
-        $lid = isset($args['lid']) ? $args['lid'] : (int)$this->request->query->get('lid', null);
-        if (!isset($lid)) {
-            throw new Zikula_Exception_Fatal($this->__f('Error! Could not find download for ID #%s.', $lid));
-        }
-        return "This is a temp message";
+        $this->redirect(ModUtil::url('StrainID2', 'user', 'view'));
+    }
+    
+    public function search($args)
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('StrainID::', '::', ACCESS_OVERVIEW));
+        // create new Form reference
+        $view = FormUtil::newForm($this->name, $this);
+        $strain_table = SessionUtil::getVar('search_results');
+        $view->assign('strain_table', $strain_table);
+        return $view->execute('user/search.tpl', new StrainID2_Form_Handler_User_Search());
     }
 
 }

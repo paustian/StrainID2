@@ -9,7 +9,6 @@
 
 {$strain_table}
  
-<p><a href="{pnmodurl modname="StrainID2" type="admin" func="edit"}">{gt text="Create a Strain"}</a></p>
 {adminfooter}
 <script type="text/javascript">
 // <![CDATA[

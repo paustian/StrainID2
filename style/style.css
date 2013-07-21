@@ -1,0 +1,14 @@
+table.z-datatable{
+    border: solid black thin;
+}
+
+tr.strain_list_row_header{
+    font-weight:bolder;
+}
+td.strain_header {
+    background-color: #9999ff;
+}
+
+td.strain_cell {
+    background-color: #ccccff;
+}

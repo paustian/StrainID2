@@ -23,13 +23,12 @@ class StrainID2_Entity_Repository_StrainID2Repository extends EntityRepository
      * @param string $where -- search statement
      * @return array of objects 
      */
-    public function getStrains($orderBy, $where)
+    public function getStrains($orderBy, $where='')
     {
         $dql = "SELECT a FROM StrainID2_Entity_StrainID2 a";
-        $where = array();
-
+        
         if (!empty($where)) {
-            $dql .= ' WHERE ' . implode(' AND ', $where);
+            $dql .= ' WHERE ' . $where;
         }
 
         $dql .= " ORDER BY a.$orderBy $orderDir";
@@ -49,6 +48,21 @@ class StrainID2_Entity_Repository_StrainID2Repository extends EntityRepository
             die;
         }
         return $result;
+    }
+    
+    public function selectSearchAnd($items_to_search, $orderBy = '')
+    {
+        $where = '';    
+        foreach($items_to_search as $key => $item){
+             $item = DataUtil::formatForStore($item);
+             $search_strings = explode("|", $item);
+             $whereSub = '';
+             foreach($search_strings as $search_string){
+                 $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . 'a.' . $key . ' LIKE \'%' . $search_string . '%\'';
+             }
+             $where .= ((!empty($where)) ? ' AND (' . $whereSub . ')' : '(' . $whereSub . ')');
+        }
+        return $this->getStrains($orderBy, $where);
     }
 
 }

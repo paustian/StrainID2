@@ -43,96 +43,38 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
      */
     public function search(array $args = array())
     {
-        if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
-            return '';
-        }
-    
-        // ensure that database information of Search module is loaded
         ModUtil::dbInfoLoad('Search');
-    
-        // save session id as it is used when inserting search results below
-        $sessionId  = session_id();
-    
-        // retrieve list of activated object types
-        $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array) FormUtil::getPassedValue('search_strainid_types', array(), 'GETPOST');
-    
-        $controllerHelper = new StrainID_Util_Controller($this->serviceManager);
-        $utilArgs = array('api' => 'search', 'action' => 'search');
-        $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-        $entityManager = ServiceUtil::getService('doctrine.entitymanager');
-        $currentPage = 1;
-        $resultsPerPage = 50;
-    
-        foreach ($searchTypes as $objectType) {
-            if (!in_array($objectType, $allowedTypes)) {
-                continue;
-            }
-    
-            $whereArray = array();
-            $languageField = null;
-            switch ($objectType) {
-                case 'strain':
-                    $whereArray[] = 'workflowState';
-                    $whereArray[] = 'name';
-                    $whereArray[] = 'indole';
-                    $whereArray[] = 'methyl_red';
-                    $whereArray[] = 'vogues_proskauer';
-                    $whereArray[] = 'simmons_citrate';
-                    $whereArray[] = 'h2s';
-                    $whereArray[] = 'phenylalanine';
-                    $whereArray[] = 'lysine';
-                    $whereArray[] = 'ornithine';
-                    $whereArray[] = 'motility';
-                    $whereArray[] = 'lactose';
-                    break;
-            }
-            $where = Search_Api_User::construct_where($args, $whereArray, $languageField);
-    
-            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
-            $repository = $entityManager->getRepository($entityClass);
-    
-            // get objects from database
-            list($entities, $objectCount) = $repository->selectWherePaginated($where, '', $currentPage, $resultsPerPage, false);
-    
-            if ($objectCount == 0) {
-                continue;
-            }
-    
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
-            $titleField = $repository->getTitleFieldName();
-            $descriptionField = $repository->getDescriptionFieldName();
-            foreach ($entities as $entity) {
-                // create identifier for permission check
-                $instanceId = '';
-                foreach ($idFields as $idField) {
-                    if (!empty($instanceId)) {
-                        $instanceId .= '_';
-                    }
-                    $instanceId .= $entity[$idField];
-                }
-                if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
-                    continue;
-                }
-    
-                $title = ($titleField != '') ? $entity[$titleField] : $this->__('Item');
-                $description = ($descriptionField != '') ? $entity[$descriptionField] : '';
-                $created = (isset($entity['createdDate'])) ? $entity['createdDate'] : '';
-    
-                $searchItemData = array(
-                    'title'   => $title,
-                    'text'    => $description,
-                    'extra'   => '',
-                    'created' => $created,
-                    'module'  => $this->name,
-                    'session' => $sessionId
-                );
-    
-                if (!DBUtil::insertObject($searchItemData, 'search_result')) {
-                    return LogUtil::registerError($this->__('Error! Could not save the search results.'));
-                }
+
+        $sessionId = session_id();
+
+        // this is a bit of a hacky way to ustilize this API for Doctrine calls.
+        $where = Search_Api_User::construct_where($args, array('a.name'), null);
+        if (!empty($where)) {
+            $where = trim(substr(trim($where), 1, -1));
+        }
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('a')
+            ->from('StrainID2_Entity_StrainID2', 'a')
+            ->where($where);
+        $query = $qb->getQuery();
+        $results = $query->getResult();
+
+        foreach ($results as $result) {
+            $record = array(
+                'title' => $result->getName(),
+                'text' => '',
+                'extra' => '',
+                'created' => $result->getDate()->format('Y-m-d h:m:s'),
+                'module' => 'StraindID2',
+                'session' => $sessionId
+            );
+
+            if (!DBUtil::insertObject($record, 'search_result')) {
+                return LogUtil::registerError($this->__('Error! Could not save the search results.'));
             }
         }
-    
+
         return true;
     }
     
