@@ -10,7 +10,8 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
      */
     public function info()
     {
-        
+        return array('title' => 'StrainID2',
+            'functions' => array('StrainID2' => 'search'));
     }
     
     /**
@@ -61,11 +62,11 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
 
         foreach ($results as $result) {
             $record = array(
-                'title' => $result->getName(),
+                'title' => $result['name'],
                 'text' => '',
                 'extra' => '',
-                'created' => $result->getDate()->format('Y-m-d h:m:s'),
-                'module' => 'StraindID2',
+                'created' => DataUtil::formatForStore(date("Y-m-d H:i:s")),
+                'module' => 'StrainID2',
                 'session' => $sessionId
             );
 
@@ -86,7 +87,9 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
      */
     public function search_check(array $args = array())
     {
-        // nothing to do as we have no display pages which could be linked
+        $datarow = &$args['datarow'];
+        $datarow['url'] = ModUtil::url('StrainID2', 'user', 'view');
+        
         return true;
     }
 
