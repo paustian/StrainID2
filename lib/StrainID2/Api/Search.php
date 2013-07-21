@@ -10,8 +10,7 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
      */
     public function info()
     {
-        return array('title'     => $this->name,
-                     'functions' => array($this->name => 'search'));
+        
     }
     
     /**
@@ -29,7 +28,7 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
     
         $view = Zikula_View::getInstance($this->name);
     
-        $view->assign('active_strain', (!isset($args['active_strain']) || isset($args['active']['active_strain'])));
+        $view->assign('strains', (!isset($args['StrainID']) || isset($args['active']['StrainID'])));
     
         return $view->fetch('search/options.tpl');
     }
@@ -41,7 +40,7 @@ class StrainID2_Api_Search extends Zikula_AbstractApi
      *
      * @return boolean
      */
-    public function search(array $args = array())
+    public function search($args)
     {
         ModUtil::dbInfoLoad('Search');
 
