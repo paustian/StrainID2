@@ -50,7 +50,7 @@ class StrainID2_Block_List extends Zikula_Controller_AbstractBlock
             return;
         }
 
-        $downloads = ModUtil::apiFunc('StrainID2', 'user', 'getall', array(
+        $strains = ModUtil::apiFunc('StrainID2', 'user', 'getall', array(
                     'category' => $vars['category'],
                     'limit' => $vars['limit'],
                     'orderby' => 'date',
@@ -61,7 +61,7 @@ class StrainID2_Block_List extends Zikula_Controller_AbstractBlock
         $this->view->setCacheId('listblock' . '|' . $blockinfo['bid'] . "|" . $vars['category']);
 
         // assign the item
-        $this->view->assign('downloads', $downloads);
+        $this->view->assign('strains', $strains);
 
         // Populate block info and pass to theme
         $blockinfo['content'] = $this->view->fetch('blocks/list.tpl');

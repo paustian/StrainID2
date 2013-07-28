@@ -26,7 +26,7 @@ class StrainID2_Api_User extends Zikula_AbstractApi
         return null;
     }
     /**
-     * get downloads filtered as requested
+     * get strains filtered as requested
      * @param type $args
      * @return array of objects
      */
@@ -40,7 +40,7 @@ class StrainID2_Api_User extends Zikula_AbstractApi
 
         $result = array();
         foreach ($strains as $key => $strain) {
-            if ((!SecurityUtil::checkPermission('StrainID2::Item', $download->getSid() . '::', ACCESS_OVERVIEW))) {
+            if ((!SecurityUtil::checkPermission('StrainID2::Item', $strain->getSid() . '::', ACCESS_OVERVIEW))) {
                 continue;
             } else {
                 $result[$key] = $strain;
